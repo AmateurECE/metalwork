@@ -7,9 +7,9 @@
 
   outputs = { self, nixpkgs, ... }: let
     system = "aarch64-linux";
-    green = "\\033[32;1m";
-    blue = "\\033[34;1m";
-    reset = "\\033[0m";
+    green = "\\[\\033[32;1m\\]";
+    blue = "\\[\\033[34;1m\\]";
+    reset = "\\[\\033[0m\\]";
   in {
     devShells."${system}".default = let
       pkgs = import nixpkgs {
