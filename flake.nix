@@ -7,9 +7,6 @@
 
   outputs = { self, nixpkgs, ... }: let
     system = "aarch64-linux";
-    green = "\\[\\033[32;1m\\]";
-    blue = "\\[\\033[34;1m\\]";
-    reset = "\\[\\033[0m\\]";
   in {
     devShells."${system}".default = let
       pkgs = import nixpkgs {
@@ -24,17 +21,9 @@
         };
       };
     in pkgs.callPackage (
-      {mkShell, clang, openocd, mkdocs}:
+      { mkShell, clang, openocd, mkdocs, cmake, conan }:
       mkShell {
-        nativeBuildInputs = [
-          clang
-          openocd
-          mkdocs
-        ];
-
-        shellHook = ''
-          export PS1="[${green}metalwork ${blue}\W${reset}]\$ "
-        '';
+        nativeBuildInputs = [ clang openocd mkdocs cmake conan ];
       }
     ) {};
   };
