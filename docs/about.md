@@ -35,6 +35,13 @@ to hack together some privacy-invasive consumer IoT shit, but those of us that
 write control loops, applications for softcores, and shit that controls _real_
 things in the _real world_ don't want that kind of solution.
 
+## How Does Metalwork Compare to stm32-cmake?
+
+This seems like a very cool project. I have some goals that stretch beyond the
+scope of that project, however. Metalwork prioritizes reproducible builds and
+toolchains with batteries included. I also plan to support more than just STM32
+platforms--Texas Instruments, NXP, AVR and RPi Pico.
+
 # What is it that I think I'm bringing to the ecosystem?
 
 Maybe nothing. I'm not so arrogant to believe that this isn't going to be

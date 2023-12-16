@@ -21,9 +21,10 @@
         };
       };
     in pkgs.callPackage (
-      { mkShell, clang, openocd, mkdocs, cmake, conan }:
+      { mkShell, clang, openocd, mkdocs, cmake, conan, gcc }:
       mkShell {
         nativeBuildInputs = [ clang openocd mkdocs cmake conan ];
+        depsBuildBuild = [ gcc ];
       }
     ) {};
   };
