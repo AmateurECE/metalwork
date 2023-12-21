@@ -7,8 +7,15 @@
 
   outputs = { self, nixpkgs, ... }: let
     system = "aarch64-linux";
-  in {
+  in rec {
+    packages."${system}" = let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in import ./mkdocstrings-handlers { inherit pkgs; };
+
     devShells."${system}".default = let
+      inherit packages;
       pkgs = import nixpkgs {
         inherit system;
         crossSystem = {
@@ -21,11 +28,20 @@
         };
       };
     in pkgs.callPackage (
-      { mkShell, clang, openocd, mkdocs, cmake, conan, gcc }:
+      {
+        mkShell,
+        openocd, cmake, conan, gcc,
+        mkdocs, python311Packages, packages
+      }:
       mkShell {
-        nativeBuildInputs = [ clang openocd mkdocs cmake conan ];
+        nativeBuildInputs = [
+          openocd cmake conan
+          mkdocs python311Packages.mkdocstrings
+          python311Packages.mkdocs-material
+          packages."${system}".python311Packages.mkdocstrings-cmake
+        ];
         depsBuildBuild = [ gcc ];
       }
-    ) {};
+    ) { inherit packages; };
   };
 }

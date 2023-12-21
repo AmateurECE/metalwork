@@ -1,1 +1,5 @@
-site_name: My Docs
+site_name: Metalwork
+theme:
+  name: material
+plugins:
+- mkdocstrings:
