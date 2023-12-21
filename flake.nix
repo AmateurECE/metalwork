@@ -6,42 +6,48 @@
   };
 
   outputs = { self, nixpkgs, ... }: let
-    system = "aarch64-linux";
+    forAllSystems = nixpkgs.lib.genAttrs [
+      "aarch64-linux"
+      "x86_64-linux"
+    ];
   in rec {
-    packages."${system}" = let
-      pkgs = import nixpkgs {
+    packages = forAllSystems (system:
+      let pkgs = import nixpkgs {
         inherit system;
       };
-    in import ./mkdocstrings-handlers { inherit pkgs; };
+      in import ./mkdocstrings-handlers { inherit pkgs; }
+    );
 
-    devShells."${system}".default = let
-      inherit packages;
-      pkgs = import nixpkgs {
-        inherit system;
-        crossSystem = {
-          config = "arm-none-eabi";
-          libc = "newlib";
-          gcc = {
-            cpu = "cortex-m4";
-            fpu = "fpv4-sp-d16";
+    devShells = forAllSystems(system:
+      let pkgs = import nixpkgs {
+          inherit system;
+          crossSystem = {
+            config = "arm-none-eabi";
+            libc = "newlib";
+            gcc = {
+              cpu = "cortex-m4";
+              fpu = "fpv4-sp-d16";
+            };
           };
         };
-      };
-    in pkgs.callPackage (
-      {
-        mkShell,
-        openocd, cmake, conan, gcc,
-        mkdocs, python311Packages, packages
-      }:
-      mkShell {
-        nativeBuildInputs = [
-          openocd cmake conan
-          mkdocs python311Packages.mkdocstrings
-          python311Packages.mkdocs-material
-          packages."${system}".python311Packages.mkdocstrings-cmake
-        ];
-        depsBuildBuild = [ gcc ];
+      in {
+        default = pkgs.callPackage (
+          {
+            mkShell,
+            openocd, cmake, conan, gcc,
+            mkdocs, python311Packages, packages
+          }:
+          mkShell {
+            nativeBuildInputs = [
+              openocd cmake conan
+              mkdocs python311Packages.mkdocstrings
+              python311Packages.mkdocs-material
+              packages."${system}".python311Packages.mkdocstrings-cmake
+            ];
+            depsBuildBuild = [ gcc ];
+          }
+        ) { inherit packages; };
       }
-    ) { inherit packages; };
+    );
   };
 }
