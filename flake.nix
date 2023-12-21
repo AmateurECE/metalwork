@@ -15,7 +15,7 @@
       let pkgs = import nixpkgs {
         inherit system;
       };
-      in import ./mkdocstrings-handlers { inherit pkgs; }
+      in import ./. { inherit pkgs; }
     );
 
     devShells = forAllSystems(system:
