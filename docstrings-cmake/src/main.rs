@@ -1,11 +1,10 @@
 use nom::{
-    branch::alt,
     bytes::complete::tag,
     bytes::complete::take_while,
     character::complete::{char, multispace1},
     multi::separated_list0,
-    sequence::{delimited, preceded},
-    IResult,
+    sequence::{delimited, pair, preceded, terminated},
+    IResult, branch::alt,
 };
 
 #[derive(Default)]
@@ -15,7 +14,7 @@ struct FunctionSignature {
 }
 
 fn identifier(input: &str) -> IResult<&str, &str> {
-    take_while(|c: char| c.is_alphanumeric() || c == '_')(input)
+    take_while(|c: char| c.is_alphanumeric() || c == '_' || c == '.' || c == '-')(input)
 }
 
 fn function_call(name: &str) -> impl Fn(&str) -> IResult<&str, Vec<&str>> {
@@ -36,6 +35,18 @@ fn function_call(name: &str) -> impl Fn(&str) -> IResult<&str, Vec<&str>> {
     }
 }
 
+fn function_expression(input: &str) -> IResult<&str, ()> {
+    preceded(
+        identifier,
+        delimited(
+            char('('),
+            separated_list0(multispace1, identifier),
+            char(')'),
+        ),
+    )(input)
+    .map(|(i, _)| (i, ()))
+}
+
 fn function_signature(input: &str) -> IResult<&str, FunctionSignature> {
     let (result, mut args) = function_call("function")(input)?;
     if args.is_empty() {
@@ -53,10 +64,21 @@ fn function_signature(input: &str) -> IResult<&str, FunctionSignature> {
     ))
 }
 
+fn endfunction(input: &str) -> IResult<&str, ()> {
+    tag("endfunction()")(input).map(|(i, _)| (i, ()))
+}
+
 fn function(input: &str) -> IResult<&str, FunctionSignature> {
-    let (input, signature) = function_signature(input)?;
-    let (input, _) = alt((tag("endfunction()"), multispace1, identifier))(input)?;
-    Ok((input, signature))
+    terminated(
+        function_signature,
+        pair(
+            multispace1,
+            separated_list0(multispace1, alt((
+                endfunction,
+                function_expression,
+            ))),
+        ),
+    )(input)
 }
 
 fn main() {
@@ -69,6 +91,12 @@ fn one_arg_function_signature() {
     assert_eq!(input, "");
     assert_eq!(&signature.name, "TEST");
     assert_eq!(signature.args, vec!["ARG1".to_string()]);
+}
+
+#[test]
+fn simple_function_expression() {
+    let (input, _) = function_expression("add_library(test test.c)").expect("Error parsing");
+    assert_eq!(input, "");
 }
 
 #[test]
