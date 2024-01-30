@@ -32,21 +32,25 @@
         };
       in {
         default = pkgs.callPackage (
-          {
-            mkShell,
-            openocd, cmake, conan, gcc,
-            mkdocs, python311Packages, packages
-          }:
-          mkShell {
-            nativeBuildInputs = [
-              openocd cmake conan
-              mkdocs python311Packages.mkdocstrings
-              python311Packages.mkdocs-material
-              packages."${system}".python311Packages.mkdocstrings-cmake
+          {}: pkgs.mkShell ({
+            # https://ryantm.github.io/nixpkgs/stdenv/cross-compilation/
+            nativeBuildInputs =
+              with pkgs.pkgsBuildHost;
+              with python311Packages;
+              with packages."${system}".pkgsBuildHost.python311Packages;
+            [
+              openocd
+              cmake
+              conan
+              mkdocs
+              mkdocstrings
+              mkdocs-material
+              mkdocstrings-cmake
             ];
-            depsBuildBuild = [ gcc ];
-          }
-        ) { inherit packages; };
+
+            buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];
+          })
+        ) {};
       }
     );
   };
