@@ -15,7 +15,11 @@
       let pkgs = import nixpkgs {
         inherit system;
       };
-      in import ./. { inherit pkgs; }
+      in (outputs:
+        outputs // {
+          conan-config = outputs.lib.mkConanConfig { inherit system; };
+        }
+      ) (import ./. { inherit pkgs; })
     );
 
     devShells = forAllSystems(system:
@@ -46,6 +50,7 @@
               mkdocstrings
               mkdocs-material
               mkdocstrings-cmake
+              packages."${system}".conan-config
             ];
 
             buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];
