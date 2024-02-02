@@ -9,15 +9,13 @@
         root = ./.;
         fileset = lib.fileset.unions [
           ./settings.yml
+          ./remotes.json
         ];
       };
 
       buildPhase = ''
-        install -Dm644 settings.yml -t $out/share
-      '';
-
-      shellHook = ''
-        export CONAN_CONFIG
+        install -Dm644 settings.yml -t $out
+        install -Dm644 remotes.json -t $out
       '';
     };
 }
