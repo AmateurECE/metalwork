@@ -10,12 +10,14 @@
         fileset = lib.fileset.unions [
           ./settings.yml
           ./remotes.json
+          ./profile.toml
         ];
       };
 
       buildPhase = ''
         install -Dm644 settings.yml -t $out
         install -Dm644 remotes.json -t $out
+        install -Dm644 profile.toml $out/profiles/default
       '';
     };
 }
