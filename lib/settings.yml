@@ -67,18 +67,59 @@ os:
     baremetal:
     VxWorks:
         version: ["7"]
-arch: [x86, x86_64, ppc32be, ppc32, ppc64le, ppc64,
-       armv4, armv4i, armv5el, armv5hf, armv6, armv7, armv7hf, armv7s, armv7k, armv8, armv8_32, armv8.3, arm64ec,
-       sparc, sparcv9,
-       mips, mips64, avr, s390, s390x, asm.js, wasm, sh4le,
-       e2k-v2, e2k-v3, e2k-v4, e2k-v5, e2k-v6, e2k-v7,
-       riscv64, riscv32,
-       xtensalx6, xtensalx106, xtensalx7]
-arm:
-    cpu: [cortex-m0, cortex-m1, cortex-m3, cortex-m4, cortex-m7, cortex-m33, cortex-a7]
-    thumb: [0, 1]
-    fpu: [fpv4-sp-d16]
-    float-abi: [soft, hard, softfp]
+
+arch:
+    x86:
+    x86_64:
+    ppc32be:
+    ppc32:
+    ppc64le:
+    ppc64:
+    armv4:
+    armv4i:
+    armv5el:
+    armv5hf:
+    armv6:
+    armv6-m:
+      cpu: [null, cortex-m0, cortex-m1]
+    armv7-a:
+      cpu: [null, cortex-a7]
+    armv7-m:
+      cpu: [null, cortex-m3]
+    armv7e-m:
+      cpu: [null, cortex-m4, cortex-m7]
+      fpu: [null, fpv4-sp-d16]
+    armv7hf:
+    armv7s:
+    armv7k:
+    armv8:
+    armv8-m:
+      cpu: [null, cortex-m33]
+    armv8_32:
+    armv8.3:
+    arm64ec:
+    sparc:
+    sparcv9:
+    mips:
+    mips64:
+    avr:
+    s390:
+    s390x:
+    asm.js:
+    wasm:
+    sh4le:
+    e2k-v2:
+    e2k-v3:
+    e2k-v4:
+    e2k-v5:
+    e2k-v6:
+    e2k-v7:
+    riscv64:
+    riscv32:
+    xtensalx6:
+    xtensalx106:
+    xtensalx7:
+
 compiler:
     sun-cc:
         version: ["5.10", "5.11", "5.12", "5.13", "5.14", "5.15"]
@@ -99,6 +140,7 @@ compiler:
         threads: [null, posix, win32]  # Windows MinGW
         exception: [null, dwarf2, sjlj, seh]  # Windows MinGW
         cppstd: [null, 98, gnu98, 11, gnu11, 14, gnu14, 17, gnu17, 20, gnu20, 23, gnu23]
+        float-abi: [null, soft, hard, softfp]
     msvc:
         version: [170, 180, 190, 191, 192, 193]
         update: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
