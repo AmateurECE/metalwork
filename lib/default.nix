@@ -1,6 +1,6 @@
 { stdenv, lib }: {
   mkConanConfig = { system }:
-    stdenv.mkDerivation rec {
+    stdenv.mkDerivation {
       name = "conan-config";
 
       # Build Platform is reachable as stdenv.buildPlatform
@@ -11,13 +11,17 @@
           ./settings.yml
           ./remotes.json
           ./profile.toml
+          ./arm-none-eabi-newlib.cmake
         ];
       };
 
       buildPhase = ''
-        install -Dm644 settings.yml -t $out
-        install -Dm644 remotes.json -t $out
-        install -Dm644 profile.toml $out/profiles/default
+        install -Dm644 settings.yml -t $out/conan
+        install -Dm644 remotes.json -t $out/conan
+        install -Dm644 profile.toml $out/conan/profiles/default
+
+        install -Dm644 arm-none-eabi-newlib.cmake -t $out
+        echo "tools.cmake.cmaketoolchain:user_toolchain=[\"$out/arm-none-eabi-newlib.cmake\"]" > $out/conan/global.conf
       '';
     };
 }
