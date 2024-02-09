@@ -171,8 +171,59 @@ list(APPEND stm32mp1xx_hal_driver_headers
   Drivers/STM32MP1xx_HAL_Driver/Inc/stm32mp1xx_ll_usart.h
   Drivers/STM32MP1xx_HAL_Driver/Inc/stm32mp1xx_ll_utils.h
   Drivers/STM32MP1xx_HAL_Driver/Inc/stm32mp1xx_ll_wwdg.h
+  # Plus the CMSIS headers
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151axx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151axx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151cxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151cxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151dxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151dxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151fxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp151fxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153axx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153axx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153cxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153cxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153dxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153dxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153fxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp153fxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157axx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157axx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157cxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157cxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157dxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157dxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157fxx_ca7.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp157fxx_cm4.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/stm32mp1xx.h
+  Drivers/CMSIS/Device/ST/STM32MP1xx/Include/system_stm32mp1xx.h
+  # Plus the CMSIS core headers
+  Drivers/CMSIS/Core/Include/cmsis_armcc.h
+  Drivers/CMSIS/Core/Include/cmsis_armclang.h
+  Drivers/CMSIS/Core/Include/cmsis_armclang_ltm.h
+  Drivers/CMSIS/Core/Include/cmsis_compiler.h
+  Drivers/CMSIS/Core/Include/cmsis_gcc.h
+  Drivers/CMSIS/Core/Include/cmsis_iccarm.h
+  Drivers/CMSIS/Core/Include/cmsis_version.h
+  Drivers/CMSIS/Core/Include/core_armv81mml.h
+  Drivers/CMSIS/Core/Include/core_armv8mbl.h
+  Drivers/CMSIS/Core/Include/core_armv8mml.h
+  Drivers/CMSIS/Core/Include/core_cm0.h
+  Drivers/CMSIS/Core/Include/core_cm0plus.h
+  Drivers/CMSIS/Core/Include/core_cm1.h
+  Drivers/CMSIS/Core/Include/core_cm23.h
+  Drivers/CMSIS/Core/Include/core_cm3.h
+  Drivers/CMSIS/Core/Include/core_cm33.h
+  Drivers/CMSIS/Core/Include/core_cm35p.h
+  Drivers/CMSIS/Core/Include/core_cm4.h
+  Drivers/CMSIS/Core/Include/core_cm7.h
+  Drivers/CMSIS/Core/Include/core_sc000.h
+  Drivers/CMSIS/Core/Include/core_sc300.h
+  Drivers/CMSIS/Core/Include/mpu_armv7.h
+  Drivers/CMSIS/Core/Include/mpu_armv8.h
+  Drivers/CMSIS/Core/Include/tz_context.h
   # Plus these from the configure_file directives above.
-  # TODO: Need CMSIS device/core headers
   "${CMAKE_CURRENT_BINARY_DIR}/stm32mp1xx_hal_conf.h"
   "${CMAKE_CURRENT_BINARY_DIR}/lock_resource.h")
 set_target_properties(stm32mp1xx_hal_driver PROPERTIES PUBLIC_HEADER

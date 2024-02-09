@@ -56,8 +56,18 @@ class stm32mp1Recipe(ConanFile):
 
     def package_info(self):
         self.cpp_info.components['hal'].libs = ['stm32mp1xx_hal_driver']
+        self.cpp_info.components['hal'].includedirs = ['include/stm32mp1xx/hal']
+        flags = ['-DUSE_HAL_DRIVER', '-D' + str(self.options.device), '-DCORE_CM4']
+        # TODO: Can we remove the -include stdint.h?
+        self.cpp_info.components['hal'].cflags = ['-include', 'stdint.h'] + flags
+        self.cpp_info.components['hal'].cxxflags = ['-include', 'cstdint'] + flags
+
         self.cpp_info.components['disco_bsp'].libs = ['stm32mp1xx_disco_bsp']
+        self.cpp_info.components['disco_bsp'].includedirs = ['include/stm32mp1xx/bsp']
+        self.cpp_info.components['disco_bsp'].requires = ['hal']
+
         self.cpp_info.components['eval_bsp'].libs = ['stm32mp1xx_eval_bsp']
+
         # NOTE: Conan apparently changes the extension of the installed
         # object files from '.obj' to '.o'
         # TODO: Just iterate over the objects in the libdir.
