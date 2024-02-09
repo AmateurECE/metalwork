@@ -1,6 +1,11 @@
-{ stdenv, lib }: {
+{ stdenv, lib, writeText, ruby }: {
   mkConanConfig = { system }:
-    stdenv.mkDerivation {
+    let
+      global = writeText "global.conf" ''
+        tools.cmake.cmaketoolchain:user_toolchain=["<%= out %>/arm-none-eabi-newlib.cmake"]
+        tools.build.cross_building:can_run=False
+      '';
+    in stdenv.mkDerivation {
       name = "conan-config";
 
       # Build Platform is reachable as stdenv.buildPlatform
@@ -15,13 +20,15 @@
         ];
       };
 
+      buildInputs = [ ruby ];
+
       buildPhase = ''
         install -Dm644 settings.yml -t $out/conan
         install -Dm644 remotes.json -t $out/conan
+        erb out=$out ${global} > $out/conan/global.conf
         install -Dm644 profile.toml $out/conan/profiles/default
 
         install -Dm644 arm-none-eabi-newlib.cmake -t $out
-        echo "tools.cmake.cmaketoolchain:user_toolchain=[\"$out/arm-none-eabi-newlib.cmake\"]" > $out/conan/global.conf
       '';
     };
 }
