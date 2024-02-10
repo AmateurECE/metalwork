@@ -63,13 +63,16 @@ class stm32mp1Recipe(ConanFile):
         self.cpp_info.components['hal'].cflags = ['-include', 'stdint.h'] + flags
         self.cpp_info.components['hal'].cxxflags = ['-include', 'cstdint'] + flags
 
+        self.cpp_info.components['lock_resource'].libs = ['stm32mp1xx_lock_resource']
+        self.cpp_info.components['lock_resource'].requires = ['hal']
+
         self.cpp_info.components['disco_bsp'].libs = ['stm32mp1xx_disco_bsp']
         self.cpp_info.components['disco_bsp'].includedirs = ['include/stm32mp1xx/bsp']
-        self.cpp_info.components['disco_bsp'].requires = ['hal']
+        self.cpp_info.components['disco_bsp'].requires = ['hal', 'lock_resource']
 
         self.cpp_info.components['eval_bsp'].libs = ['stm32mp1xx_eval_bsp']
         self.cpp_info.components['eval_bsp'].includedirs = ['include/stm32mp1xx/bsp']
-        self.cpp_info.components['eval_bsp'].requires = ['hal']
+        self.cpp_info.components['eval_bsp'].requires = ['hal', 'lock_resource']
 
         # NOTE: Conan apparently changes the extension of the installed
         # object files from '.obj' to '.o'

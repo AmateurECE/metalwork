@@ -5,13 +5,7 @@ include(GNUInstallDirs)
 # Needs a HAL configuration file. Just use the template.
 configure_file(
   Drivers/STM32MP1xx_HAL_Driver/Inc/stm32mp1xx_hal_conf_template.h
-  "${CMAKE_CURRENT_BINARY_DIR}/stm32mp1xx_hal_conf.h")
-
-# This file is present in the template, but the template has its own
-# hal_conf header that is different from ours.
-configure_file(
-  Projects/STM32MP157C-DK2/Templates/Inc/lock_resource.h
-  "${CMAKE_CURRENT_BINARY_DIR}/lock_resource.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/hal/stm32mp1xx_hal_conf.h")
 
 # ls Drivers/STM32MP1xx_HAL_Driver/Src
 add_library(stm32mp1xx_hal_driver
@@ -87,8 +81,7 @@ add_library(stm32mp1xx_hal_driver
   Drivers/STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_spi.c
   Drivers/STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_tim.c
   Drivers/STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_usart.c
-  Drivers/STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_utils.c
-  Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c)
+  Drivers/STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_utils.c)
 list(APPEND stm32mp1xx_hal_driver_headers
 # find Drivers/STM32MP1xx_HAL_Driver/Inc/ -maxdepth 1 -type f | grep -v template
   Drivers/STM32MP1xx_HAL_Driver/Inc/stm32mp1xx_hal.h
@@ -224,23 +217,38 @@ list(APPEND stm32mp1xx_hal_driver_headers
   Drivers/CMSIS/Core/Include/mpu_armv8.h
   Drivers/CMSIS/Core/Include/tz_context.h
   # Plus these from the configure_file directives above.
-  "${CMAKE_CURRENT_BINARY_DIR}/stm32mp1xx_hal_conf.h"
-  # TODO: lock_resource.h is only required by the BSPs, and only if
-  # USE_BSP_CRITICAL_SECTION=1. Make this an option.
-  "${CMAKE_CURRENT_BINARY_DIR}/lock_resource.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/hal/stm32mp1xx_hal_conf.h")
 set_target_properties(stm32mp1xx_hal_driver PROPERTIES PUBLIC_HEADER
   "${stm32mp1xx_hal_driver_headers}")
 target_include_directories(stm32mp1xx_hal_driver PUBLIC
   Drivers/CMSIS/Core/Include
   Drivers/CMSIS/Device/ST/STM32MP1xx/Include
   Drivers/STM32MP1xx_HAL_Driver/Inc
-  "${CMAKE_CURRENT_BINARY_DIR}")
+  "${CMAKE_CURRENT_BINARY_DIR}/hal")
 target_compile_options(stm32mp1xx_hal_driver PUBLIC
   -DUSE_HAL_DRIVER
   -D${DEVICE}
   -DCORE_CM4)
-add_library(STM32MP1xx::HAL_Driver ALIAS stm32mp1xx_hal_driver)
+add_library(STM32MP1xx::HAL ALIAS stm32mp1xx_hal_driver)
 install(TARGETS stm32mp1xx_hal_driver
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stm32mp1xx/hal)
+
+# This file is present in the template, but the template has its own
+# hal_conf header that is different from ours.
+configure_file(
+  Projects/STM32MP157C-DK2/Templates/Inc/lock_resource.h
+  "${CMAKE_CURRENT_BINARY_DIR}/lock/lock_resource.h")
+
+add_library(stm32mp1xx_lock_resource
+  Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c)
+target_include_directories(stm32mp1xx_lock_resource PUBLIC
+  "${CMAKE_CURRENT_BINARY_DIR}/lock")
+set_target_properties(stm32mp1xx_lock_resource PROPERTIES PUBLIC_HEADER
+  "${CMAKE_CURRENT_BINARY_DIR}/lock/lock_resource.h")
+target_link_libraries(stm32mp1xx_lock_resource PUBLIC
+  STM32MP1xx::HAL)
+add_library(STM32MP1xx::LockResource ALIAS stm32mp1xx_lock_resource)
+install(TARGETS stm32mp1xx_lock_resource
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stm32mp1xx/hal)
 
 # BSP configuration file for the DISCO. Start with the template, but enable
@@ -248,8 +256,8 @@ install(TARGETS stm32mp1xx_hal_driver
 add_custom_target(stm32mp15xx_disco_conf
   COMMAND sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
   "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco_conf_template.h"
-  > "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_disco_conf.h"
-  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_disco_conf.h")
+  > "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_disco_conf.h"
+  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_disco_conf.h")
 
 add_library(stm32mp1xx_disco_bsp
   Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco.c
@@ -261,14 +269,15 @@ list(APPEND stm32mp1xx_disco_bsp_headers
   Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco_bus.h
   Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco_errno.h
   Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco_stpmic1.h
-  "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_disco_conf.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_disco_conf.h")
 set_target_properties(stm32mp1xx_disco_bsp PROPERTIES PUBLIC_HEADER
   "${stm32mp1xx_disco_bsp_headers}")
 target_include_directories(stm32mp1xx_disco_bsp PUBLIC
-  "${CMAKE_CURRENT_BINARY_DIR}")
+  "${CMAKE_CURRENT_BINARY_DIR}/bsp")
 add_dependencies(stm32mp1xx_disco_bsp stm32mp15xx_disco_conf)
 target_link_libraries(stm32mp1xx_disco_bsp PUBLIC
-  STM32MP1xx::HAL_Driver)
+  STM32MP1xx::LockResource
+  STM32MP1xx::HAL)
 add_library(STM32MP1xx::DISCO_BSP ALIAS stm32mp1xx_disco_bsp)
 install(TARGETS stm32mp1xx_disco_bsp
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stm32mp1xx/bsp)
@@ -278,10 +287,11 @@ install(TARGETS stm32mp1xx_disco_bsp
 add_custom_target(stm32mp15xx_eval_conf
   COMMAND sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
   "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_conf_template.h"
-  > "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_eval_conf.h"
-  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_eval_conf.h")
+  > "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_eval_conf.h"
+  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_eval_conf.h")
 
 add_library(stm32mp1xx_eval_bsp
+  Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval.c
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_bus.c
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_stpmic1.c)
@@ -291,14 +301,16 @@ list(APPEND stm32mp1xx_eval_bsp_headers
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_bus.h
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_errno.h
   Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_stpmic1.h
-  "${CMAKE_CURRENT_BINARY_DIR}/stm32mp15xx_eval_conf.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_eval_conf.h")
 set_target_properties(stm32mp1xx_eval_bsp PROPERTIES PUBLIC_HEADER
   "${stm32mp1xx_eval_bsp_headers}")
 target_include_directories(stm32mp1xx_eval_bsp PUBLIC
-  "${CMAKE_CURRENT_BINARY_DIR}")
+  "${CMAKE_CURRENT_BINARY_DIR}/bsp"
+  "${CMAKE_CURRENT_BINARY_DIR}/lock")
 add_dependencies(stm32mp1xx_eval_bsp stm32mp15xx_eval_conf)
 target_link_libraries(stm32mp1xx_eval_bsp PUBLIC
-  STM32MP1xx::HAL_Driver)
+  STM32MP1xx::LockResource
+  STM32MP1xx::HAL)
 add_library(STM32MP1xx::EVAL_BSP ALIAS stm32mp1xx_eval_bsp)
 install(TARGETS stm32mp1xx_eval_bsp
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stm32mp1xx/bsp)
@@ -313,7 +325,7 @@ add_library(stm32mp1xx_c_polyfill OBJECT
   Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c
   Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c)
 target_compile_options(stm32mp1xx_c_polyfill PRIVATE -include sys/types.h)
-target_link_libraries(stm32mp1xx_c_polyfill PRIVATE STM32MP1xx::HAL_Driver)
+target_link_libraries(stm32mp1xx_c_polyfill PRIVATE STM32MP1xx::HAL)
 add_library(STM32MP1xx::C_POLYFILL ALIAS stm32mp1xx_c_polyfill)
 install(FILES "$<TARGET_OBJECTS:stm32mp1xx_c_polyfill>"
   DESTINATION lib)

@@ -28,3 +28,5 @@ class stm32mp1TestConan(ConanFile):
         if can_run(self):
             cmd = os.path.join(self.cpp.build.bindir, "example")
             self.run(cmd, env="conanrun")
+            cmd = os.path.join(self.cpp.build.bindir, "empty")
+            self.run(cmd, env="conanrun")
