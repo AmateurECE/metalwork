@@ -333,3 +333,4 @@ install(FILES "$<TARGET_OBJECTS:stm32mp1xx_c_polyfill>"
 install(FILES
   Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/STM32MP157CAAX_RAM.ld
   DESTINATION lib)
+install(FILES License.md DESTINATION share/licenses)
