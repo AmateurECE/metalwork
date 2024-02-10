@@ -225,6 +225,8 @@ list(APPEND stm32mp1xx_hal_driver_headers
   Drivers/CMSIS/Core/Include/tz_context.h
   # Plus these from the configure_file directives above.
   "${CMAKE_CURRENT_BINARY_DIR}/stm32mp1xx_hal_conf.h"
+  # TODO: lock_resource.h is only required by the BSPs, and only if
+  # USE_BSP_CRITICAL_SECTION=1. Make this an option.
   "${CMAKE_CURRENT_BINARY_DIR}/lock_resource.h")
 set_target_properties(stm32mp1xx_hal_driver PROPERTIES PUBLIC_HEADER
   "${stm32mp1xx_hal_driver_headers}")

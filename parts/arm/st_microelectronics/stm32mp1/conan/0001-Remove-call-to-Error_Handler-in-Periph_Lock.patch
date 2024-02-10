@@ -1,0 +1,37 @@
+From fd8d284c68214fb5aebb36e4a6b0a9187181ca8f Mon Sep 17 00:00:00 2001
+From: "Ethan D. Twardy" <ethan.twardy@gmail.com>
+Date: Fri, 9 Feb 2024 21:17:10 -0600
+Subject: [PATCH] Remove call to Error_Handler() in Periph_Lock
+
+This function previously contained a call to an error handler that's
+usually contained in main.c. Since this file is now built into a
+library, we run into link order issues that resolve in undefined
+reference errors to this function. Since it doesn't serve a purpose for
+this busy-wait implementation in particular, we remove it and delegate
+the responsibility of error handling to the caller.
+
+diff --git a/Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c b/Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c
+index 24ab395..5e76642 100644
+--- a/Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c
++++ b/Projects/STM32MP157C-DK2/Templates/Src/lock_resource.c
+@@ -21,8 +21,6 @@
+   /* Includes ------------------------------------------------------------------*/
+ #include "lock_resource.h"
+ 
+-extern void Error_Handler(void);
+-
+ /* Private macro -------------------------------------------------------------*/
+ 
+ /*
+@@ -72,7 +70,7 @@ LockResource_Status_t Periph_Lock(void* Peripheral, uint32_t Timeout)
+     if ((Timeout == 0U) || ((HAL_GetTick() - tickstart) > Timeout))
+     {
+        ret = LOCK_RESOURCE_STATUS_TIMEOUT;
+-       Error_Handler();
++       break;
+     }
+   }
+ 
+-- 
+2.43.0
+

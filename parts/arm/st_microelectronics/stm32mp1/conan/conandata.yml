@@ -1,0 +1,7 @@
+sources:
+  '1.6.0':
+    url: 'https://github.com/STMicroelectronics/STM32CubeMP1/archive/refs/tags/1.6.0.tar.gz'
+    sha256: 'db5fa905a7ddd827e046fb2516b79c13f106f8a36ab401c45c68ba60e1a38cf3'
+patches:
+  '1.6.0':
+    - patch_file: 0001-Remove-call-to-Error_Handler-in-Periph_Lock.patch
