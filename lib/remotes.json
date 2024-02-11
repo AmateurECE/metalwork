@@ -4,6 +4,11 @@
    "name": "conancenter",
    "url": "https://center.conan.io",
    "verify_ssl": true
+  },
+  {
+   "name": "metalwork",
+   "url": "https://artifactory.metalworkcpp.org/artifactory/api/conan/metalwork-conan",
+   "verify_ssl": true
   }
  ]
 }
