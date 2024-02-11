@@ -11,19 +11,18 @@
       "x86_64-linux"
     ];
   in rec {
+    lib = import ./lib {};
+
     packages = forAllSystems (system:
       let pkgs = import nixpkgs {
         inherit system;
       };
-      in (outputs:
-        outputs // {
-          conan-config = outputs.lib.mkConanConfig { inherit system; };
-        }
-      ) (import ./. { inherit pkgs; })
+      in import ./. { inherit pkgs; }
     );
 
     devShells = forAllSystems(system:
-      let pkgs = import nixpkgs {
+      let
+        pkgs = import nixpkgs {
           inherit system;
           crossSystem = {
             config = "arm-none-eabi";
@@ -34,6 +33,7 @@
             };
           };
         };
+        conan-config = lib.mkConanConfig pkgs;
       in {
         default = pkgs.callPackage (
           {}: pkgs.mkShell ({
@@ -50,10 +50,14 @@
               mkdocstrings
               mkdocs-material
               mkdocstrings-cmake
-              packages."${system}".conan-config
+              conan-config
             ];
 
             buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];
+
+            shellHook = ''
+              conan config install ${conan-config}/conan
+            '';
           })
         ) {};
       }

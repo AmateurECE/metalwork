@@ -1,5 +1,5 @@
-{ stdenv, lib, writeText, ruby }: {
-  mkConanConfig = { system }:
+{ }: {
+  mkConanConfig = { stdenv, lib, writeText, pkgsBuildHost, ... }:
     let
       global = writeText "global.conf" ''
         tools.cmake.cmaketoolchain:user_toolchain=["<%= out %>/arm-none-eabi-newlib.cmake"]
@@ -20,7 +20,7 @@
         ];
       };
 
-      buildInputs = [ ruby ];
+      nativeBuildInputs = with pkgsBuildHost; [ ruby ];
 
       buildPhase = ''
         install -Dm644 settings.yml -t $out/conan
