@@ -1,3 +1,6 @@
 /.conan
 /.direnv/
 /site/
+/*.deb
+/*.buildinfo
+/*.changes

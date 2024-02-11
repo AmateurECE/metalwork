@@ -1,0 +1,18 @@
+Source: metalwork-services
+Section: web
+Priority: optional
+Maintainer: Ethan D. Twardy <ethan.twardy@gmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+Standards-Version: 4.6.2
+Homepage: https://github.com/AmateurECE/metalwork
+Vcs-Browser: https://github.com/AmateurECE/metalwork
+Vcs-Git: https://github.com/AmateurECE/metalwork
+
+Package: metalwork-artifactory
+Architecture: all
+Depends:
+ twardyece-common, twardyece-nginx, ${misc:Depends}
+Description: Artifactory instance for the Metalwork project
+ An instance of Artifactory CE for serving Conan packages produced by the metalwork project.

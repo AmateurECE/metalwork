@@ -1,0 +1,7 @@
+[Volume]
+PodmanArgs=--driver=local
+Type=btrfs
+Options=subvol=@metalwork_artifactory
+Device=/dev/disk/by-uuid/05599193-00bc-4a81-9550-54623b2ec8c4
+User=1030
+Group=1030

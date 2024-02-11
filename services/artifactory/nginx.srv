@@ -1,0 +1,43 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name artifactory.metalworkcpp.org;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+upstream artifactory {
+        keepalive 32;
+        server public_metalwork-artifactory:8082;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name artifactory.metalworkcpp.org;
+
+    location = / {
+        return 302 https://$host/ui/;
+    }
+
+    location /ui {
+        proxy_pass http://artifactory/ui;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Protocol $scheme;
+        proxy_set_header X-Forwarded-Host $http_host;
+    }
+
+    location /artifactory {
+        proxy_pass http://artifactory/artifactory;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Protocol $scheme;
+        proxy_set_header X-Forwarded-Host $http_host;
+    }
+}
