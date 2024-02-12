@@ -16,6 +16,7 @@
           ./settings.yml
           ./remotes.json
           ./profile.toml
+          ./json.py
           ./arm-none-eabi-newlib.cmake
         ];
       };
@@ -27,6 +28,7 @@
         install -Dm644 remotes.json -t $out/conan
         erb out=$out ${global} > $out/conan/global.conf
         install -Dm644 profile.toml $out/conan/profiles/default
+        install -Dm644 json.py -t $out/conan/extensions/generators
 
         install -Dm644 arm-none-eabi-newlib.cmake -t $out
       '';
