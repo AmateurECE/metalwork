@@ -17,6 +17,9 @@ server {
     listen [::]:443 ssl http2;
     server_name artifactory.metalworkcpp.org;
 
+    # To prevent Error 413 "File upload too large"
+    client_max_body_size 32M;
+
     location = / {
         return 302 https://$host/ui/;
     }
