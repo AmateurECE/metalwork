@@ -13,6 +13,6 @@ Vcs-Git: https://github.com/AmateurECE/metalwork
 Package: metalwork-artifactory
 Architecture: all
 Depends:
- twardyece-common, twardyece-nginx, ${misc:Depends}
+ twardyece-common, twardyece-nginx, twardyece-postgresql, ${misc:Depends}
 Description: Artifactory instance for the Metalwork project
  An instance of Artifactory CE for serving Conan packages produced by the metalwork project.

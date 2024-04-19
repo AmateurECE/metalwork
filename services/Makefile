@@ -3,7 +3,6 @@ BUILD_DIR = build
 B := $(shell pwd)/$(BUILD_DIR)
 $(shell mkdir -p $(B))
 
-SUBDIRS += postgresql
 SUBDIRS += artifactory
 
 all: build-subdirs
