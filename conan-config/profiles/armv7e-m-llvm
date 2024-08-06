@@ -1,0 +1,21 @@
+[settings]
+arch=armv7e-m
+arch.cpu=cortex-m4
+arch.fpu=fpv4-sp-d16
+build_type=Release
+compiler=clang
+compiler.cppstd=17
+compiler.libcxx=picolibc
+compiler.version=18
+compiler.float-abi=softfp
+os=baremetal
+
+[conf]
+tools.build:cflags=['-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mthumb', '-mfloat-abi=softfp', '-fno-exceptions']
+tools.build:cxxflags=['-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mthumb', '-mfloat-abi=softfp', '-fno-exceptions']
+tools.build:compiler_executables={'c': 'clang', 'cpp': 'clang++', 'asm': 'arm-none-eabi-as'}
+tools.build.cross_building:can_run=False
+tools.cmake.cmaketoolchain:extra_variables={'CMAKE_TRY_COMPILE_TARGET_TYPE': 'STATIC_LIBRARY', 'CMAKE_C_COMPILER_TARGET': 'armv7m-none-eabi', 'CMAKE_CXX_COMPILER_TARGET': 'armv7m-none-eabi', 'CMAKE_ASM_FLAGS_RELEASE': ''}
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmaketoolchain:system_name=Generic
+tools.cmake.cmaketoolchain:system_processor=arm

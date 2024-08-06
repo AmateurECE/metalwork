@@ -1,0 +1,27 @@
+load("@bzlmod_conan//:pkg.bzl", "conan_pkg")
+
+conan_recipe(
+  name = "stm32mp1",
+  conanfile = "conanfile.py",
+  data = "conandata.yml",
+  patches = [
+    "0001-Remove-call-to-Error_Handler-in-Periph_Lock.patch",
+  ],
+  srcs = [
+    "CMakeLists.txt",
+  ],
+)
+
+conan_binary(
+  name = "llvm",
+  target_platform = "//platforms:cortex-m4",
+  compiler = "//compilers:clang",
+  recipe = ":stm32mp1",
+)
+
+conan_binary(
+  name = "gcc",
+  target_platform = "//platforms:cortex-m4",
+  compiler = "//compilers:gcc",
+  recipe = ":stm32mp1",
+)

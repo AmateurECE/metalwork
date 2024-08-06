@@ -4,3 +4,11 @@
 /*.deb
 /*.buildinfo
 /*.changes
+
+# Toolchains
+LLVM-ET-Arm-18.1.3-Linux-AArch64.tar.xz
+LLVM-ET-Arm-18.1.3-Linux-AArch64/
+arm-gnu-toolchain-13.3.rel1-aarch64-arm-none-eabi.tar.xz
+arm-gnu-toolchain-13.3.rel1-aarch64-arm-none-eabi/
+cpython-3.10.14+20240726-aarch64-unknown-linux-gnu-install_only_stripped.tar.gz
+python/

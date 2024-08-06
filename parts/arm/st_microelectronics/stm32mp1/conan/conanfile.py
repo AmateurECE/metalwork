@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout
+from conan.tools.cmake import CMake, cmake_layout
 from conan.tools.files import get, copy, apply_conandata_patches, export_conandata_patches
 import glob
 
@@ -27,6 +27,8 @@ class stm32mp1Recipe(ConanFile):
         'device': 'STM32MP157Dxx',
     }
 
+    generators = "CMakeToolchain"
+
     def layout(self):
         cmake_layout(self)
 
@@ -39,10 +41,6 @@ class stm32mp1Recipe(ConanFile):
     def source(self):
         # TODO: Put this in a conandata.yml
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
-
-    def generate(self):
-        tc = CMakeToolchain(self, generator="Ninja")
-        tc.generate()
 
     def build(self):
         apply_conandata_patches(self)
@@ -74,8 +72,6 @@ class stm32mp1Recipe(ConanFile):
         self.cpp_info.components['eval_bsp'].includedirs = ['include/stm32mp1xx/bsp']
         self.cpp_info.components['eval_bsp'].requires = ['hal', 'lock_resource']
 
-        # NOTE: Conan apparently changes the extension of the installed
-        # object files from '.obj' to '.o'
-        self.cpp_info.components['c_polyfill'].objects = glob.glob(self.package_folder + '/lib/*.o')
         # TODO: Make linker script an option
         self.cpp_info.components['c_polyfill'].exelinkflags = ['-T', 'STM32MP157CAAX_RAM.ld']
+        self.cpp_info.components['c_polyfill'].objects = glob.glob(self.package_folder + '/lib/*.obj')

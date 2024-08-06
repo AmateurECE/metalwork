@@ -1,0 +1,23 @@
+bazel_dep(name = "toolchains_arm_gnu", version = "1.0.2")
+
+arm_toolchain = use_extension("@toolchains_arm_gnu//:extensions.bzl", "arm_toolchain")
+
+arm_toolchain.arm_none_eabi()
+use_repo(arm_toolchain, "arm_none_eabi")
+register_toolchains()
+
+bazel_dep(name = "bzlmod_conan", version = "0.1.0")
+local_path_override(
+  module_name = "bzlmod_conan",
+  path = "/home/edtwardy/Git/bzlmod-conan",
+)
+
+conan = use_extension("@bzlmod_conan//:extensions.bzl", "conan")
+conan.toolchain(version = "2.6.0")
+conan.config(install_from="lib")
+use_repo(conan, "conan")
+
+register_toolchains(
+  "@arm_none_eabi//toolchain:all",
+  "@conan//:toolchain",
+)

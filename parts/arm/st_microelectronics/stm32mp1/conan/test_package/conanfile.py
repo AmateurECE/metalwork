@@ -1,20 +1,16 @@
 import os
 
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout
+from conan.tools.cmake import CMake, cmake_layout
 from conan.tools.build import can_run
 
 
 class stm32mp1TestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeDeps"
+    generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
-        self.requires(self.tested_reference_str)
-
-    def generate(self):
-        tc = CMakeToolchain(self, generator="Ninja")
-        tc.generate()
+        self.requires(self.tested_reference_str, libs=True, headers=True)
 
     def build(self):
         cmake = CMake(self)

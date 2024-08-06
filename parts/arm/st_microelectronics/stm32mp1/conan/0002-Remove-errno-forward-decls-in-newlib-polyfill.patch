@@ -1,0 +1,50 @@
+From 7e81090a883845ea85a96007ed0459bd48318338 Mon Sep 17 00:00:00 2001
+From: "Ethan D. Twardy" <ethan.twardy@gmail.com>
+Date: Fri, 2 Aug 2024 08:37:17 -0500
+Subject: [PATCH] Remove errno forward decls in newlib polyfill
+
+These forward declarations produce a "non-thread-local declaration of
+'errno' follows thread-local declaration" error when compiling under
+clang.
+
+diff --git a/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c b/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c
+index e0629f4..cba0af3 100644
+--- a/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c
++++ b/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c
+@@ -43,7 +43,6 @@
+ 
+ /* Variables */
+ //#undef errno
+-extern int errno;
+ extern int __io_putchar(int ch) __attribute__((weak));
+ extern int __io_getchar(void) __attribute__((weak));
+ 
+diff --git a/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c b/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c
+index b125b20..6fdd4a4 100644
+--- a/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c
++++ b/Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c
+@@ -35,7 +35,6 @@
+ #include <stdio.h>
+ 
+ /* Variables */
+-extern int errno;
+ register char * stack_ptr asm("sp");
+ 
+ /* Functions */
+diff --git a/cortex-m4.cmake b/cortex-m4.cmake
+new file mode 100644
+index 0000000..dbe6fec
+--- /dev/null
++++ b/cortex-m4.cmake
+@@ -0,0 +1,8 @@
++set(CMAKE_SYSTEM_NAME Generic)
++set(CMAKE_SYSTEM_PROCESSOR arm)
++
++set(CMAKE_C_COMPILER clang)
++set(CMAKE_C_COMPILER_TARGET armv7m-none-eabi)
++set(CMAKE_CXX_COMPILER clang++)
++set(CMAKE_CXX_COMPILER_TARGET armv7m-none-eabi)
++set(CMAKE_ASM_FLAGS "-fno-integrated-as -v")
+-- 
+2.44.2
+

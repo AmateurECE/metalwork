@@ -1,5 +1,29 @@
 import json
+import re
 from conan.tools.files import save
+
+
+def _relativize_path(path, pattern):
+    """
+    Returns a relative path with regard to pattern given.
+
+    :param path: absolute or relative path
+    :param pattern: either a piece of path or a pattern to match the leading
+        part of the path
+    :return: Unix-like path relative if matches to the given pattern.
+             Otherwise, it returns the original path.
+    """
+    if not path or not pattern:
+        return path
+    path_ = path.replace("\\", "/").replace("/./", "/")
+    pattern_ = pattern.replace("\\", "/").replace("/./", "/")
+    match = re.match(pattern_, path_)
+    if match:
+        matching = match[0]
+        if path_.startswith(matching):
+            path_ = path_.replace(matching, "").strip("/")
+            return path_.strip("./") or "./"
+    return path
 
 
 def component_object(cpp_info):

@@ -226,9 +226,7 @@ target_include_directories(stm32mp1xx_hal_driver PUBLIC
   Drivers/STM32MP1xx_HAL_Driver/Inc
   "${CMAKE_CURRENT_BINARY_DIR}/hal")
 target_compile_options(stm32mp1xx_hal_driver PUBLIC
-  -DUSE_HAL_DRIVER
-  -D${DEVICE}
-  -DCORE_CM4)
+  $<$<COMPILE_LANGUAGE:C>:-DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -D${DEVICE} -DCORE_CM4>)
 add_library(STM32MP1xx::HAL ALIAS stm32mp1xx_hal_driver)
 install(TARGETS stm32mp1xx_hal_driver
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stm32mp1xx/hal)
@@ -254,7 +252,7 @@ install(TARGETS stm32mp1xx_lock_resource
 # BSP configuration file for the DISCO. Start with the template, but enable
 # USE_STPMIC1x.
 add_custom_target(stm32mp15xx_disco_conf
-  COMMAND sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
+  COMMAND mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/bsp" && sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
   "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/BSP/STM32MP15xx_DISCO/stm32mp15xx_disco_conf_template.h"
   > "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_disco_conf.h"
   BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_disco_conf.h")
@@ -285,7 +283,7 @@ install(TARGETS stm32mp1xx_disco_bsp
 # BSP configuration file for the EVAL. Start with the template, but enable
 # USE_STPMIC1x.
 add_custom_target(stm32mp15xx_eval_conf
-  COMMAND sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
+  COMMAND mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/bsp" && sed -E -e "\"s/(USE_STPMIC1x\\s+)0U/\\11U/\""
   "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/BSP/STM32MP15xx_EVAL/stm32mp15xx_eval_conf_template.h"
   > "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_eval_conf.h"
   BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/bsp/stm32mp15xx_eval_conf.h")
@@ -324,7 +322,7 @@ add_library(stm32mp1xx_c_polyfill OBJECT
   Drivers/CMSIS/Device/ST/STM32MP1xx/Source/Templates/system_stm32mp1xx.c
   Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/sysmem.c
   Projects/STM32MP157C-DK2/Templates/STM32CubeIDE/CM4/Application/User/syscalls.c)
-target_compile_options(stm32mp1xx_c_polyfill PRIVATE -include sys/types.h)
+target_compile_options(stm32mp1xx_c_polyfill PRIVATE $<$<COMPILE_LANGUAGE:C>:-include sys/types.h>)
 target_link_libraries(stm32mp1xx_c_polyfill PRIVATE STM32MP1xx::HAL)
 add_library(STM32MP1xx::C_POLYFILL ALIAS stm32mp1xx_c_polyfill)
 install(FILES "$<TARGET_OBJECTS:stm32mp1xx_c_polyfill>"
